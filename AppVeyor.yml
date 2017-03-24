@@ -1,3 +1,7 @@
+
+#We dont want to use MSBuild
+build: false
+
 #Kick off the CI/CD pipeline
 before_test: 
  - echo "started"
