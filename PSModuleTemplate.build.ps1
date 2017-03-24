@@ -11,7 +11,7 @@ $RequiredModules = @('InvokeBuild', 'Pester', 'PSScriptAnalyzer')
 $SourcePath = "$PSScriptRoot\$ModuleName"
 $OutputPath = "$env:ProgramFiles\WindowsPowerShell\Modules"
 
-Task . Init, Clean, Build
+Task . Init, Clean, Build, Analyze
 
 Task Init {
 	$Seperator
@@ -37,8 +37,9 @@ Task Init {
 
 Task Clean {
 	$Seperator
-	Write-Output "Cleaning Output Path"
-	Join-Path -Path $OutputPath -ChildPath $ModuleName | Get-Item -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
+	$Path = Join-Path -Path $OutputPath -ChildPath $ModuleName
+	Write-Output "Cleaning: $Path"
+	$Path | Get-Item -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
 
 }
 
@@ -46,20 +47,45 @@ Task Build {
 	$Seperator
 	
 	#Create output module folder
-	New-Item -Path $OutputPath -Name $ModuleName -ItemType Directory -OutVariable ModuleFolder
+	Write-Output "Building Module..."
+	$Script:ModuleFolder = New-Item -Path $OutputPath -Name $ModuleName -ItemType Directory
 
 	#Create root module psm1 file
 	$ModuleContentParts = 'Classes', 'Private', 'Public' | ForEach-Object {
+		Write-Output "Adding $_..."
 		Join-Path -Path $SourcePath -ChildPath $_ | Get-ChildItem -Recurse -Depth 1 -Include '*.ps1','*.psm1' | Get-Content -Raw
 	}
 	$ModuleContent = $ModuleContentParts -join "`r`n`r`n`r`n"
-	New-Item -Path $ModuleFolder.FullName -Name "$ModuleName.psm1" -ItemType File -Value $ModuleContent -OutVariable RootModule
+	$RootModule = New-Item -Path $ModuleFolder.FullName -Name "$ModuleName.psm1" -ItemType File -Value $ModuleContent
 
 	#Copy module manifest and any other source files
+	Write-Output "Copying other source files..."
 	Get-ChildItem -Path $SourcePath -File | Where-Object {$_.Name -ne $RootModule.Name} | Copy-Item -Destination $ModuleFolder.FullName
 
 	#Update module manifest
+	Write-Output "Updating module manifest..."
 	$ManifestFile = Join-Path -Path $ModuleFolder -ChildPath "$($RootModule.BaseName).psd1"
+	
 	$FunctionstoExport = Get-ChildItem -Path "$SourcePath\Public" -Filter '*.ps1' | Select-Object -ExpandProperty BaseName
 	Update-ModuleManifest -Path $ManifestFile -FunctionsToExport $FunctionstoExport
+	Write-Output "FunctionsToExport: $FunctionstoExport"
+}
+
+Task Analyze {
+	$Seperator
+	Write-Output "Running script analyzer..."
+	$AnalyzerIssues = Invoke-ScriptAnalyzer -Path $ModuleFolder -Settings "$PSScriptRoot\ScriptAnalyzerSettings.psd1"
+
+	If ($AnalyzerIssues) {
+		Write-Warning "PSScriptAnalyzer has found the following issues:"
+		$AnalyzerIssues
+		Throw "Script analyzer returned issues!"
+	}
+	Else {
+		Write-Output "No issues found"
+	}
+}
+
+Task Test {
+	
 }

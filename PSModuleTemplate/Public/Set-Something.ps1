@@ -1,10 +1,16 @@
 Function Set-Something {
-    [CmdletBinding()]
+    [CmdletBinding(
+		SupportsShouldProcess = $true
+	)]
     Param ()
 
     Begin {}
 
-    Process {}
+    Process {
+		If ($PSCmdlet.ShouldProcess('Something')){
+			#Set Something
+		}
+	}
 
     End {}
 }
