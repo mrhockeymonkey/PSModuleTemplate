@@ -1,6 +1,6 @@
 
 #We dont want to use MSBuild
-build: false
+build: off
 
 #Kick off the CI/CD pipeline
 before_test: 
