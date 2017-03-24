@@ -53,7 +53,6 @@ Task Build {
 
 	#Create root module psm1 file
 	$ModuleContentParts = 'Classes', 'Private', 'Public' | ForEach-Object {
-		Write-Output "Adding $_..."
 		Join-Path -Path $SourcePath -ChildPath $_ | Get-ChildItem -Recurse -Depth 1 -Include '*.ps1','*.psm1' | Get-Content -Raw
 	}
 	$ModuleContent = $ModuleContentParts -join "`r`n`r`n`r`n"
@@ -92,12 +91,16 @@ Task Test {
 	$Seperator
 	Write-Output "Running pester tests..."
 
-	$TestResults = Invoke-Pester -Path $ModuleFolder -PassThru -OutputFormat NUnitXml -OutputFile "$PSScriptRoot\PesterResults.xml"
+	$FileName = 'PesterOutput.xml'
+	Import-Module -Name $ModuleName
+	$TestResults = Invoke-Pester -Path $ModuleFolder -PassThru -OutputFormat NUnitXml -OutputFile "$PSScriptRoot\$FileName"
 
 	#Upload tests to appveyor?        
 	# (New-Object 'System.Net.WebClient').UploadFile(
     #        "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
     #        "$ProjectRoot\$TestFile" )
+
+	Remove-Item -Path "$PSScriptRoot\$FileName" -ErrorAction SilentlyContinue
 
 	If ($TestResults.FailedCount -gt 0) {
 		Throw "Failed $($TestResults.FailedCount) test(s)!"
