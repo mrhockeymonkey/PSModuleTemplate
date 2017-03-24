@@ -14,6 +14,6 @@ Catch {
 }
 
 #Export public functions
-Get-ChildItem -Path "$PSScriptRoot\Private\" -Filter '*.ps1' | ForEach-Object {
+Get-ChildItem -Path "$PSScriptRoot\Public\" -Filter '*.ps1' | ForEach-Object {
 	Export-ModuleMember -Function $_.BaseName
 }
