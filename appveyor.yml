@@ -4,10 +4,10 @@ build: off
 
 #Kick off the CI/CD pipeline
 before_test: 
- - echo "started"
- - ps: install-module invokebuild
- - echo "installed"
- - ps: import-module invokebuild
- - echo "imported"
+  - echo "started"
+  - ps: install-module invokebuild
+  - echo "installed"
+  - ps: import-module invokebuild
+  - echo "imported"
 test_script:
- - ps: invoke-build
+  - ps: invoke-build
