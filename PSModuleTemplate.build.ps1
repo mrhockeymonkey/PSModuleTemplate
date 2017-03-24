@@ -1,8 +1,9 @@
 <#
 	.SYNOPSIS
+	InvokeBuild Script to Build, Analyze & Test Module
 
 	.DESCRIPTION
-
+	This script will be consume by InvokeBuild module and carry out each defined task
 #>
 
 $ModuleName = 'PSModuleTemplate'
@@ -11,7 +12,7 @@ $RequiredModules = @('InvokeBuild', 'Pester', 'PSScriptAnalyzer')
 $SourcePath = "$PSScriptRoot\$ModuleName"
 $OutputPath = "$env:ProgramFiles\WindowsPowerShell\Modules"
 
-Task . Init, Clean, Build, Analyze
+Task . Init, Clean, Build, Analyze, Test
 
 Task Init {
 	$Seperator
@@ -74,6 +75,7 @@ Task Build {
 Task Analyze {
 	$Seperator
 	Write-Output "Running script analyzer..."
+	
 	$AnalyzerIssues = Invoke-ScriptAnalyzer -Path $ModuleFolder -Settings "$PSScriptRoot\ScriptAnalyzerSettings.psd1"
 
 	If ($AnalyzerIssues) {
@@ -87,5 +89,17 @@ Task Analyze {
 }
 
 Task Test {
-	
+	$Seperator
+	Write-Output "Running pester tests..."
+
+	$TestResults = Invoke-Pester -Path $ModuleFolder -PassThru -OutputFormat NUnitXml -OutputFile "$PSScriptRoot\PesterResults.xml"
+
+	#Upload tests to appveyor?        
+	# (New-Object 'System.Net.WebClient').UploadFile(
+    #        "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
+    #        "$ProjectRoot\$TestFile" )
+
+	If ($TestResults.FailedCount -gt 0) {
+		Throw "Failed $($TestResults.FailedCount) test(s)!"
+	}
 }
