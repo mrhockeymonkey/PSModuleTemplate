@@ -8,7 +8,7 @@ Function Set-Something {
 
     Process {
 		If ($PSCmdlet.ShouldProcess('Something')){
-			#Set Something
+			#Set Something!
 		}
 	}
 
