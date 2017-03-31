@@ -1,4 +1,10 @@
 
+#Ignore certain files like README.md
+skip_commits:
+  files:
+    - .gitignore/*
+    - '**/*.md'
+
 #Version Format - Major & Minor are specified in the psd1 so we just need the build number
 version: x.y.{build}
 
