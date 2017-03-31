@@ -105,19 +105,15 @@ Task Test {
 	$Seperator
 	Write-Output "Running pester tests..."
 
-	$NUnitXml = 'PesterOutput.xml'
+	$NUnitXml = Join-Path -Path $PSScriptRoot -ChildPath 'PesterOutput.xml'
 	Import-Module -Name $ModuleName
-	$TestResults = Invoke-Pester -Path $PSScriptRoot -PassThru -OutputFormat NUnitXml -OutputFile "$PSScriptRoot\$NUnitXml"
+	$TestResults = Invoke-Pester -Path . -PassThru -OutputFormat NUnitXml -OutputFile $NUnitXml
 
 	#Upload tests to appveyor
 	If ($CIEngine -eq 'AppVeyor') {
 		Write-Output "Uploading test results to appveyor..."
 		$WebClient = New-Object 'System.Net.WebClient'
-		$WebClient.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)","$ProjectRoot\$NUnitXml" )
-
-		# upload results to AppVeyor
-$wc = New-Object 'System.Net.WebClient'
-$wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\xunit-results.xml))
+		$WebClient.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)","$NUnitXml" )
 	}
 
 	If ($TestResults.FailedCount -gt 0) {
