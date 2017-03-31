@@ -5,14 +5,14 @@
 This is a template module setup with CI baked in. The purpose of this repo is to record my preferences and also to use
 as a base when developing module. 
 
-Key Features:
+### Key Features
 * All module source code is contained in a folder not in the root
 * InvokeBuild is used to create a single psm1 file and copy/update any other source files
 * PSScriptAnalyzer settings are stored in a seperate file for easy configuration
 * VSCode workspace settings are committed to keep contributers working in the same manner
 * appveyor.yml is used to automatically compile,analyze and test any commits (Logically AppVeyor would also deploy but this is just a template)
 
-Key Benefits:
+### Key Benefits
 * Can be run locally or integrate with CI engines like AppVeyor or Bamboo (My Experience so far)
 * All source code is seperated for easy management
 * When deploying, ONLY the files that are required are used. End users dont need pester tests, build scripts and other source
