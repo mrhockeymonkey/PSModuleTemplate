@@ -13,4 +13,4 @@ before_test:
   - ps: import-module invokebuild
   - echo "imported"
 test_script:
-  - ps: Invoke-Build -BuildNumber $Env:APPVEYOR_BUILD_NUMBER -CIEngine AppVeyor
+  - ps: Invoke-Build -BuildNumber $Env:APPVEYOR_BUILD_NUMBER

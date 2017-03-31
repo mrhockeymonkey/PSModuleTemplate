@@ -111,8 +111,13 @@ Task Test {
 
 	#Upload tests to appveyor
 	If ($CIEngine -eq 'AppVeyor') {
+		Write-Output "Uploading test results to appveyor..."
 		$WebClient = New-Object 'System.Net.WebClient'
 		$WebClient.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)","$ProjectRoot\$NUnitXml" )
+
+		# upload results to AppVeyor
+$wc = New-Object 'System.Net.WebClient'
+$wc.UploadFile("https://ci.appveyor.com/api/testresults/xunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\xunit-results.xml))
 	}
 
 	If ($TestResults.FailedCount -gt 0) {
