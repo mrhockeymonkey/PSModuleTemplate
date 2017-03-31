@@ -7,7 +7,10 @@
 #>
 
 Param (
-	[Int]$BuildNumber
+	[Int]$BuildNumber,
+	
+	[ValidateSet('Bamboo','AppVeyor')]
+	[String]$CIEngine
 )
 
 $ModuleName = 'PSModuleTemplate'
@@ -102,16 +105,15 @@ Task Test {
 	$Seperator
 	Write-Output "Running pester tests..."
 
-	$FileName = 'PesterOutput.xml'
+	$NUnitXml = 'PesterOutput.xml'
 	Import-Module -Name $ModuleName
-	$TestResults = Invoke-Pester -Path $ModuleFolder -PassThru -OutputFormat NUnitXml -OutputFile "$PSScriptRoot\$FileName"
+	$TestResults = Invoke-Pester -Path $PSScriptRoot -PassThru -OutputFormat NUnitXml -OutputFile "$PSScriptRoot\$NUnitXml"
 
-	#Upload tests to appveyor?        
-	# (New-Object 'System.Net.WebClient').UploadFile(
-    #        "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-    #        "$ProjectRoot\$TestFile" )
-
-	Remove-Item -Path "$PSScriptRoot\$FileName" -ErrorAction SilentlyContinue
+	#Upload tests to appveyor
+	If ($CIEngine -eq 'AppVeyor') {
+		$WebClient = New-Object 'System.Net.WebClient'
+		$WebClient.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)","$ProjectRoot\$NUnitXml" )
+	}
 
 	If ($TestResults.FailedCount -gt 0) {
 		Throw "Failed $($TestResults.FailedCount) test(s)!"
