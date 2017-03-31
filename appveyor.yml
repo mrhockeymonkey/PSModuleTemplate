@@ -10,4 +10,4 @@ before_test:
   - ps: import-module invokebuild
   - echo "imported"
 test_script:
-  - ps: invoke-build
+  - ps: Invoke-Build -BuildNumber $Env:APPVEYOR_BUILD_NUMBER

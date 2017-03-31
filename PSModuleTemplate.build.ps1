@@ -6,6 +6,10 @@
 	This script will be consume by InvokeBuild module and carry out each defined task
 #>
 
+Param (
+	[Int]$BuildNumber
+)
+
 $ModuleName = 'PSModuleTemplate'
 $Seperator = '------------------------------------------'
 $RequiredModules = @('InvokeBuild', 'Pester', 'PSScriptAnalyzer')
@@ -64,11 +68,18 @@ Task Build {
 
 	#Update module manifest
 	Write-Output "Updating module manifest..."
-	$ManifestFile = Join-Path -Path $ModuleFolder -ChildPath "$($RootModule.BaseName).psd1"
+	$ManifestPath = Join-Path -Path $ModuleFolder -ChildPath "$($RootModule.BaseName).psd1"
 	
+	If ($BuildNumber) {
+		$Version = Test-ModuleManifest -Path $ManifestPath | Select-Object -ExpandProperty Version
+		$Version = [Version]::New($Version.Major, $Version.Minor, $BuildNumber)
+		Write-Host "Updating Manifest ModuleVersion to $Version"
+		Update-ModuleManifest -Path $ManifestPath -ModuleVersion $Version
+	}
+
 	$FunctionstoExport = Get-ChildItem -Path "$SourcePath\Public" -Filter '*.ps1' | Select-Object -ExpandProperty BaseName
-	Update-ModuleManifest -Path $ManifestFile -FunctionsToExport $FunctionstoExport
-	Write-Output "FunctionsToExport: $FunctionstoExport"
+	Write-Output "Updating Manifest FunctionsToExport to $FunctionstoExport"
+	Update-ModuleManifest -Path $ManifestPath -FunctionsToExport $FunctionstoExport
 }
 
 Task Analyze {
