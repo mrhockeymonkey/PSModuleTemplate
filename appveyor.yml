@@ -1,4 +1,7 @@
 
+#Version Format - Major & Minor are specified in the psd1 so we just need the build number
+version: {build}
+
 #We dont want to use MSBuild
 build: off
 
