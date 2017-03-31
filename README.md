@@ -31,5 +31,3 @@ Setup a powershell script task like below
 ```
 Invoke-Build -CIEngine Bamboo -BuildNumber {bamboo.buildNumber}
 ```
-
- 
