@@ -23,7 +23,7 @@ Param (
 
 $ModuleName = 'PSModuleTemplate'
 $Seperator = '------------------------------------------'
-$RequiredModules = @('Pester', 'PSScriptAnalyzer')
+$RequiredModules = @('Pester', 'PSScriptAnalyzer','PlatyPS')
 $SourcePath = "$PSScriptRoot\$ModuleName"
 $OutputPath = "$env:ProgramFiles\WindowsPowerShell\Modules"
 
@@ -150,4 +150,8 @@ Task Test {
 	If ($TestResults.FailedCount -gt 0) {
 		Throw "Failed $($TestResults.FailedCount) test(s)!"
 	}
+}
+
+Task GenerateDocs {
+	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\Docs"
 }
