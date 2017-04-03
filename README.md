@@ -18,6 +18,12 @@ as a base when developing module.
 * When deploying, ONLY the files that are required are used. End users dont need pester tests, build scripts and other source
 * By having all code in a single psm1 the module will load much faster (MUCH FASTER!)
 
+### Room for improvements
+* Using localised data for messages to seperate logic from text
+* Generating help xmls and about files
+* Deployment
+
+
 ## Building 
 
 ### Locally 
