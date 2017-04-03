@@ -2,11 +2,20 @@
 #Version Format - Major & Minor are specified in the psd1 so we just need the build number
 version: x.y.{build}
 
+#Request a wmf 5 vm
+os:
+  - "WMF 5"
+
+#Only run tests on master
+branches:
+  only:
+    - master
+
 #We dont want to use MSBuild
 build: off
 
 #Kick off the CI/CD pipeline
-before_test: 
+build_script: 
   - echo "started"
   - ps: install-module invokebuild
   - echo "installed"
