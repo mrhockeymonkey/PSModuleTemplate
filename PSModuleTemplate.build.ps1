@@ -23,7 +23,7 @@ Param (
 
 $ModuleName = 'PSModuleTemplate'
 $Seperator = '------------------------------------------'
-$RequiredModules = @('InvokeBuild', 'Pester', 'PSScriptAnalyzer')
+$RequiredModules = @('Pester', 'PSScriptAnalyzer')
 $SourcePath = "$PSScriptRoot\$ModuleName"
 $OutputPath = "$env:ProgramFiles\WindowsPowerShell\Modules"
 
