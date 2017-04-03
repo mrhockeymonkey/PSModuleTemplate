@@ -16,7 +16,7 @@ build: off
 #Kick off the CI/CD pipeline
 install: 
   - ps: Install-PackageProvider -Name NuGet -Force
-  - ps: Install-Module InvokeBuild
+  - ps: Install-Module InvokeBuild -Force
   - ps: Import-Module InvokeBuild
 
 build_script:
