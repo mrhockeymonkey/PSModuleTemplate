@@ -3,8 +3,7 @@
 version: x.y.{build}
 
 #Request a wmf 5 vm
-os:
-  - "WMF 5"
+os: "WMF 5"
 
 #Only run tests on master
 branches:
@@ -15,11 +14,11 @@ branches:
 build: off
 
 #Kick off the CI/CD pipeline
-build_script: 
-  - echo "started"
-  - ps: install-module invokebuild
-  - echo "installed"
-  - ps: import-module invokebuild
-  - echo "imported"
-test_script:
+install: 
+  - ps: |
+    Install-PackageProvider -Name NuGet -Force
+    Install-Module InvokeBuild
+    Import-Module InvokeBuild
+
+build_script:
   - ps: Invoke-Build -BuildNumber $Env:APPVEYOR_BUILD_NUMBER -CIEngine AppVeyor
