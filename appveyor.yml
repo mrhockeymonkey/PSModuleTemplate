@@ -15,10 +15,9 @@ build: off
 
 #Kick off the CI/CD pipeline
 install: 
-  - ps: |
-    Install-PackageProvider -Name NuGet -Force
-    Install-Module InvokeBuild
-    Import-Module InvokeBuild
+  - ps: Install-PackageProvider -Name NuGet -Force
+  - ps: Install-Module InvokeBuild
+  - ps: Import-Module InvokeBuild
 
 build_script:
   - ps: Invoke-Build -BuildNumber $Env:APPVEYOR_BUILD_NUMBER -CIEngine AppVeyor
