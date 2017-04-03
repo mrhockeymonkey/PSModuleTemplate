@@ -153,5 +153,5 @@ Task Test {
 }
 
 Task GenerateDocs {
-	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\Docs"
+	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\Docs" -Force -NoMetadata
 }
