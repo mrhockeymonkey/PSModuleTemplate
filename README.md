@@ -5,6 +5,8 @@
 This is a template module setup with CI baked in. The purpose of this repo is to record my preferences and also to use
 as a base when developing module. 
 
+http://scottsan.co.uk/2017/02/15/powershell-basics-writing-modules/
+
 ### Key Features
 * All module source code is contained in a folder not in the root
 * InvokeBuild is used to create a single psm1 file and copy/update any other source files
@@ -23,6 +25,8 @@ as a base when developing module.
 * Generating help xmls and about files
 * Format files
 * Deployment
+
+
 
 
 ## Building 
