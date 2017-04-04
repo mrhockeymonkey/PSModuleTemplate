@@ -21,6 +21,7 @@ as a base when developing module.
 ### Room for improvements
 * Using localised data for messages to seperate logic from text
 * Generating help xmls and about files
+* Format files
 * Deployment
 
 
