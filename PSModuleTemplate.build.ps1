@@ -28,6 +28,8 @@ $SourcePath = "$PSScriptRoot\$ModuleName"
 $OutputPath = "$env:ProgramFiles\WindowsPowerShell\Modules"
 
 Task . Init, Clean, Compile, Analyze, Test
+Task CompileTestAndClean Init, Clean, Compile, Analyze, Test, Clean
+Task CompileTestAndDeploy Init, Clean, Compile, Analyze, Test, Deploy
 
 Task Init {
 	$Seperator
@@ -114,6 +116,10 @@ Task Compile {
 	$FunctionstoExport = Get-ChildItem -Path "$SourcePath\Public" -Filter '*.ps1' | Select-Object -ExpandProperty BaseName
 	Write-Output "Updating Manifest FunctionsToExport to $FunctionstoExport"
 	Update-ModuleManifest -Path $NewManifestPath -FunctionsToExport $FunctionstoExport
+	
+	#Update nuspec
+	$NuspecPath = Join-Path -Path $ModuleFolder.FullName -ChildPath "$ModuleName.nuspec"
+	(Get-Content -Path $NuspecPath) -replace "<version>__VERSION__</version>","<version>$Script:Version</version>" | Set-Content -Path $NuspecPath
 }
 
 Task Analyze {
@@ -154,4 +160,12 @@ Task Test {
 
 Task GenerateDocs {
 	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\Docs" -Force -NoMetadata
+}
+
+Task Deploy {
+	$Nuspec = Join-Path -Path $Script:ModuleFolder -ChildPath "$ModuleName.nuspec" | Get-Item
+	& NuGet.exe Pack $Nuspec.FullName
+
+	$Nupkg = Join-Path -Path $PSScriptRoot -ChildPath "$ModuleName.$Script:Version.nupkg" | Get-Item
+	& NuGet.exe Push $Nupkg.FullName -Source $NugetUrl -apikey $ApiKey
 }
