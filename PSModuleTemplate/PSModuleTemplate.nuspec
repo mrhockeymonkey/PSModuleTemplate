@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>PSModuleTemplate</id>
+    <version>__VERSION__</version>
+    <authors>mrhockeymonkey</authors>
+    <owners>mrhockeymonkey</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Template module to demonstrate practise</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>PSModule Powershell Template</tags>
+  </metadata>
+</package>
