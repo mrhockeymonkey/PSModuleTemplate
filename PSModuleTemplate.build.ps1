@@ -27,9 +27,22 @@ $RequiredModules = @('Pester', 'PSScriptAnalyzer','PlatyPS')
 $SourcePath = "$PSScriptRoot\$ModuleName"
 $OutputPath = "$env:ProgramFiles\WindowsPowerShell\Modules"
 
-Task . Init, Clean, Compile, Analyze, Test
-Task CompileTestAndClean Init, Clean, Compile, Analyze, Test, Clean
-Task CompileTestAndDeploy Init, Clean, Compile, Analyze, Test, Deploy
+Task . Init, {Clean}, Compile, Analyze, Test
+Task CompileTestAndClean Init, {Clean}, Compile, Analyze, Test, {Clean}
+Task CompileTestAndDeploy Init, {Clean}, Compile, Analyze, Test, Deploy, {Clean}
+
+Function Clean {
+	#Remove any previously loaded module versions from subsequent runs
+	Get-Module -Name $ModuleName | Remove-Module
+
+	#Remove any files previously compiled but leave other versions intact
+	$Path = Join-Path -Path $OutputPath -ChildPath $ModuleName
+	If ($Script:ManifestInfo.PowershellVersion.Major -ge 5 ) {
+		$Path = Join-Path -Path $Path -ChildPath $Script:Version.ToString()
+	}
+	Write-Output "Cleaning: $Path"
+	$Path | Get-Item -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
+}
 
 Task Init {
 	$Seperator
@@ -62,21 +75,6 @@ Task Init {
 		Write-Output "Importing Module: $_"
 		Import-Module -Name $_
 	}
-}
-
-Task Clean {
-	$Seperator
-	
-	#Remove any previously loaded module versions from subsequent runs
-	Get-Module -Name $ModuleName | Remove-Module
-
-	#Remove any files previously compiled but leave other versions intact
-	$Path = Join-Path -Path $OutputPath -ChildPath $ModuleName
-	If ($Script:ManifestInfo.PowershellVersion.Major -ge 5 ) {
-		$Path = Join-Path -Path $Path -ChildPath $Script:Version.ToString()
-	}
-	Write-Output "Cleaning: $Path"
-	$Path | Get-Item -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
 }
 
 Task Compile {
