@@ -159,7 +159,8 @@ Task Test {
 }
 
 Task GenerateDocs {
-	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\Docs" -Force -NoMetadata
+	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\Docs" -Force -NoMetadata -WithModulePage
+	Join-Path -Path $PSScriptRoot -ChildPath "Docs\$ModuleName.md" | Rename-Item -NewName "index.md"
 }
 
 Task Deploy {
