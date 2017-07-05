@@ -18,7 +18,11 @@ Param (
 	[Int]$BuildNumber,
 	
 	[ValidateSet('Local','Bamboo','AppVeyor')]
-	[String]$CIEngine = 'Local'
+	[String]$CIEngine = 'Local', 
+
+	[String]$DeployUrl,
+
+	[String]$ApiKey
 )
 
 $ModuleName = 'PSModuleTemplate'
@@ -27,9 +31,9 @@ $RequiredModules = @('Pester', 'PSScriptAnalyzer','PlatyPS')
 $SourcePath = "$PSScriptRoot\$ModuleName"
 $OutputPath = "$env:ProgramFiles\WindowsPowerShell\Modules"
 
-Task . Init, {Clean}, Compile, Analyze, Test
-Task CompileTestAndClean Init, {Clean}, Compile, Analyze, Test, {Clean}
-Task CompileTestAndDeploy Init, {Clean}, Compile, Analyze, Test, Deploy, {Clean}
+Task Build Init, {Clean}, Compile, GenerateDocs
+Task BuildAndTest Init, {Clean}, Compile, Analyze, Test
+Task BuildAndDeploy Init, {Clean}, Compile, Analyze, Test, Deploy, {Clean}
 
 Function Clean {
 	#Remove any previously loaded module versions from subsequent runs
@@ -158,6 +162,7 @@ Task Test {
 
 Task GenerateDocs {
 	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\docs" -Force -NoMetadata -WithModulePage
+	Join-Path -Path $PSScriptRoot -ChildPath "docs\index.md" | Remove-Item -Force
 	Join-Path -Path $PSScriptRoot -ChildPath "docs\$ModuleName.md" | Rename-Item -NewName "index.md"
 }
 
@@ -166,5 +171,5 @@ Task Deploy {
 	& NuGet.exe Pack $Nuspec.FullName
 
 	$Nupkg = Join-Path -Path $PSScriptRoot -ChildPath "$ModuleName.$Script:Version.nupkg" | Get-Item
-	& NuGet.exe Push $Nupkg.FullName -Source $NugetUrl -apikey $ApiKey
+	& NuGet.exe Push $Nupkg.FullName -Source $DeployUrl -apikey $ApiKey
 }
