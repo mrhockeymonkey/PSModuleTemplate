@@ -162,7 +162,7 @@ Task Test {
 
 Task GenerateDocs {
 	New-MarkdownHelp -Module $ModuleName -OutputFolder "$PSScriptRoot\docs" -Force -NoMetadata -WithModulePage
-	Join-Path -Path $PSScriptRoot -ChildPath "docs\index.md" | Remove-Item -Force
+	Join-Path -Path $PSScriptRoot -ChildPath "docs\index.md" | Get-Item -ErrorAction SilentlyContinue | Remove-Item -Force
 	Join-Path -Path $PSScriptRoot -ChildPath "docs\$ModuleName.md" | Rename-Item -NewName "index.md"
 }
 
