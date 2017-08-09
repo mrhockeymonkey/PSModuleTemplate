@@ -41,7 +41,7 @@ Function Clean {
 
 	#Remove any files previously compiled but leave other versions intact
 	$Path = Join-Path -Path $OutputPath -ChildPath $ModuleName
-	If ($Script:ManifestInfo.PowershellVersion.Major -ge 5 ) {
+	If ($PSVersionTable.PSVersion.Major -ge 5 ) {
 		$Path = Join-Path -Path $Path -ChildPath $Script:Version.ToString()
 	}
 	Write-Output "Cleaning: $Path"
@@ -94,7 +94,7 @@ Task Compile {
 	}
 
 	#Make a subfolder for the version if module is for powershell 5
-	If ($ManifestInfo.PowerShellVersion.Major -ge 5 ) {
+	If ($PSVersionTable.PSVersion.Major -ge 5 ) {
 		$Script:ModuleFolder = New-Item -Path $Script:ModuleFolder -Name $Version.ToString() -ItemType Directory
 	}
 
